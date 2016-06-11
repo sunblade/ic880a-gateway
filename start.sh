@@ -14,7 +14,7 @@ echo "$SX1301_RESET_BCM_PIN"  > /sys/class/gpio/unexport
 
 # Test the connection, wait if needed.
 while [[ $(ping -c1 google.com 2>&1 | grep " 0% packet loss") == "" ]]; do
-  echo "[TTN Gateway]: Waiting for internet connection..."
+  echo "[MitT LoRa Gateway]: Waiting for internet connection..."
   sleep 30
   done
 
@@ -42,11 +42,12 @@ if [ -d ../gateway-remote-config ]; then
     GATEWAY_EUI=$(ip link show $GATEWAY_EUI_NIC | awk '/ether/ {print $2}' | awk -F\: '{print $1$2$3"FFFE"$4$5$6}')
     GATEWAY_EUI=${GATEWAY_EUI^^} # toupper
 
-    echo "[TTN Gateway]: Use Gateway EUI $GATEWAY_EUI based on $GATEWAY_EUI_NIC"
-    INSTALL_DIR="/opt/ttn-gateway"
+    echo "[MitT LoRa Gateway]: Use Gateway EUI $GATEWAY_EUI based on $GATEWAY_EUI_NIC"
+    INSTALL_DIR="/opt/lora-gateway"
     LOCAL_CONFIG_FILE=$INSTALL_DIR/bin/local_conf.json
+    BACK_CONFIG_FILE=$INSTALL_DIR/bin/local_conf.json.back
 
-    if [ -e $LOCAL_CONFIG_FILE ]; then rm $LOCAL_CONFIG_FILE; fi;
+    if [ -e $LOCAL_CONFIG_FILE ]; then cp $LOCAL_CONFIG_FILE $BACK_CONFIG_FILE && rm $LOCAL_CONFIG_FILE; fi;
     ln -s $INSTALL_DIR/gateway-remote-config/$GATEWAY_EUI.json $LOCAL_CONFIG_FILE
 
 fi
